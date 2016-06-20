@@ -71,7 +71,7 @@ static void internal_ht_grow(RHashTable2* ht) {
 // Inserts the key value pair key, value into the hashtable.
 // if update is true, allow for updates, otherwise return false if the key
 // already exists.
-bool internal_ht_insert(RHashTable2* ht, bool update, void* key, void* value) {
+static bool internal_ht_insert(RHashTable2* ht, bool update, void* key, void* value) {
 	pair_t* kvp;
 	ut64 hash;
 	ut64 bucket;
