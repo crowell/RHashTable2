@@ -66,7 +66,7 @@ static void internal_ht_grow(RHashTable2* ht) {
 }
 
 // Inserts the key value pair key, value into the hashtable.
-R_API bool r_ht_insert (RHashTable2* ht, void* key, void* value) {
+R_API bool r_ht_insert(RHashTable2* ht, void* key, void* value) {
 	pair_t* kvp;
 	ut64 hash;
 	ut64 bucket;
@@ -101,7 +101,7 @@ R_API bool r_ht_insert (RHashTable2* ht, void* key, void* value) {
 
 // Looks up the corresponding value from the key. Returns true if found, false
 // otherwise.
-R_API void* r_ht_find (RHashTable2* ht, void* key, bool* found) {
+R_API void* r_ht_find(RHashTable2* ht, void* key, bool* found) {
 	ut64 hash;
 	ut64 bucket;
 	RListIter* iter;
@@ -127,7 +127,7 @@ R_API void* r_ht_find (RHashTable2* ht, void* key, bool* found) {
 }
 
 // Deletes a kvp from the hash table from the key, if the pair exists.
-R_API void r_ht_delete (RHashTable2* ht, void* key) {
+R_API void r_ht_delete(RHashTable2* ht, void* key) {
 	ut64 hash;
 	ut64 bucket;
 	RListIter* iter;
@@ -149,4 +149,3 @@ R_API void r_ht_delete (RHashTable2* ht, void* key) {
 		}
 	}
 }
-
