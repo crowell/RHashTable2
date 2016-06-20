@@ -73,7 +73,6 @@ R_API bool r_ht_insert(RHashTable2* ht, void* key, void* value) {
 	pair_t* kvp;
 	ut64 hash;
 	ut64 bucket;
-	void* blah;
 	bool found;
 	(void)r_ht_find (ht, key, &found);
 	if (!found) {
