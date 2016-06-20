@@ -9,12 +9,12 @@ static RHashTable2* internal_ht_new(ut64 size, RHashFunction hashfunction,
 	if (ht != NULL) {
 		ht->size = size;
 		ht->count = 0;
-		ht->table = calloc (ht->size, sizeof (RList*));
 		ht->load_factor = 1;
 		ht->hashfn = hashfunction;
 		ht->cmp = comparator;
 		ht->dupkey = keydup;
 		ht->dupvalue = valdup;
+		ht->table = calloc (ht->size, sizeof (RList*));
 		if (ht->table != NULL) {
 			for (i = 0; i < ht->size; ++i) {
 				if (pair_free) {
@@ -23,6 +23,9 @@ static RHashTable2* internal_ht_new(ut64 size, RHashFunction hashfunction,
 					ht->table[i] = r_list_new ();
 				}
 			}
+		} else {
+			free (ht);
+			return NULL;
 		}
 	}
 	return ht;
@@ -94,6 +97,7 @@ R_API bool r_ht_insert(RHashTable2* ht, void* key, void* value) {
 			if (ht->count >= ht->load_factor * ht->size) {
 				internal_ht_grow (ht);
 			}
+			return true;
 		}
 	}
 	return false;
