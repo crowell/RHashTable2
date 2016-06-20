@@ -160,11 +160,13 @@ R_API void r_ht_delete(RHashTable2* ht, void* key) {
 		if (ht->cmp) {
 			if (ht->cmp (key, kvp->key) == 0) {
 				r_list_delete (list, iter);
+				--ht->count;
 				return;
 			}
 		} else {
 			if (key == kvp->key) {
 				r_list_delete (list, iter);
+				--ht->count;
 				return;
 			}
 		}
