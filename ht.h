@@ -12,9 +12,9 @@
 
 #include <r_util.h>
 
-typedef void* (*RDupKey)(void* key);
-typedef void* (*RDupValue)(void* value);
-typedef ut64 (*RHashFunction)(void* value);
+typedef void* (*RDupKey)(void*);
+typedef void* (*RDupValue)(void*);
+typedef ut64 (*RHashFunction)(void*);
 
 typedef struct pair_t{
 	void* key;
@@ -52,6 +52,6 @@ R_API bool r_ht_insert(RHashTable2* ht, void* key, void* value);
 R_API void r_ht_delete(RHashTable2* ht, void* key);
 
 // Find the value corresponding to the matching key.
-R_API bool r_ht_find(RHashTable2* ht, void* key, void* value);
+R_API void* r_ht_find(RHashTable2* ht, void* key, bool* found);
 
 #endif // R_HT_H

@@ -11,6 +11,10 @@ static RHashTable2* internal_ht_new(ut64 size, RHashFunction hashfunction,
 		ht->count = 0;
 		ht->table = calloc (ht->size, sizeof (RList*));
 		ht->load_factor = 1;
+		ht->hashfn = hashfunction;
+		ht->cmp = comparator;
+		ht->dupkey = keydup;
+		ht->dupvalue = valdup;
 		if (ht->table != NULL) {
 			for (i = 0; i < ht->size; ++i) {
 				if (pair_free) {
@@ -24,14 +28,14 @@ static RHashTable2* internal_ht_new(ut64 size, RHashFunction hashfunction,
 	return ht;
 }
 
-RHashTable2* r_ht_new(RHashFunction hashfunction, RListComparator comparator,
+R_API RHashTable2* r_ht_new(RHashFunction hashfunction, RListComparator comparator,
 		RDupKey keydup, RDupValue valdup, RListFree pair_free) {
 	ut64 initial_size = 1024;
 	return internal_ht_new (initial_size, hashfunction, comparator, keydup,
 			valdup, pair_free);
 }
 
-void r_ht_destroy(RHashTable2* ht) {
+R_API void r_ht_destroy(RHashTable2* ht) {
 	int i;
 	for (i = 0; i < ht->size; ++i) {
 		r_list_free (ht->table[i]);
@@ -62,12 +66,14 @@ static void internal_ht_grow(RHashTable2* ht) {
 }
 
 // Inserts the key value pair key, value into the hashtable.
-bool r_ht_insert (RHashTable2* ht, void* key, void* value) {
+R_API bool r_ht_insert (RHashTable2* ht, void* key, void* value) {
 	pair_t* kvp;
 	ut64 hash;
 	ut64 bucket;
 	void* blah;
-	if (!r_ht_find (ht, key, blah)) {
+	bool found;
+	(void)r_ht_find (ht, key, &found);
+	if (!found) {
 		kvp = calloc (1, sizeof (pair_t *));
 		if (kvp) {
 			if (ht->dupkey) {
@@ -95,7 +101,7 @@ bool r_ht_insert (RHashTable2* ht, void* key, void* value) {
 
 // Looks up the corresponding value from the key. Returns true if found, false
 // otherwise.
-bool r_ht_find (RHashTable2* ht, void* key, void* value) {
+R_API void* r_ht_find (RHashTable2* ht, void* key, bool* found) {
 	ut64 hash;
 	ut64 bucket;
 	RListIter* iter;
@@ -106,21 +112,22 @@ bool r_ht_find (RHashTable2* ht, void* key, void* value) {
 	r_list_foreach (ht->table[bucket], iter, kvp) {
 		if (ht->cmp) {
 			if (ht->cmp (key, kvp->key) == 0) {
-				value = kvp->value;
-				return true;
+				*found = true;
+				return  kvp->value;
 			}
 		} else {
 			if (key == kvp->key) {
-				value = kvp->value;
-				return true;
+				*found = true;
+				return  kvp->value;
 			}
 		}
 	}
-	return false;
+	*found = false;
+	return NULL;
 }
 
 // Deletes a kvp from the hash table from the key, if the pair exists.
-void r_ht_delete (RHashTable2* ht, void* key) {
+R_API void r_ht_delete (RHashTable2* ht, void* key) {
 	ut64 hash;
 	ut64 bucket;
 	RListIter* iter;
