@@ -76,9 +76,10 @@ bool internal_ht_insert(RHashTable2* ht, bool update, void* key, void* value) {
 	ut64 hash;
 	ut64 bucket;
 	bool found = true;
-	(void)r_ht_find (ht, key, &found);
-	if (found && update) {
+	if (update) {
 		r_ht_delete (ht, key);
+	} else {
+		(void)r_ht_find (ht, key, &found);
 	}
 	if (update || !found) {
 		kvp = calloc (1, sizeof (pair_t *));
