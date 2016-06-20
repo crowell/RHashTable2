@@ -18,6 +18,8 @@ int main (void) {
 	printf ("%s\n", str);
 	str = r_ht_find (ht, "cB", &found);
 	printf ("%s\n", str);
+	str = r_ht_find (ht, "c", &found);
+	printf ("%s\n", str);
 	r_ht_destroy (ht);
 	return 0;
 }
