@@ -69,13 +69,18 @@ static void internal_ht_grow(RHashTable2* ht) {
 }
 
 // Inserts the key value pair key, value into the hashtable.
-R_API bool r_ht_insert(RHashTable2* ht, void* key, void* value) {
+// if update is true, allow for updates, otherwise return false if the key
+// already exists.
+bool internal_ht_insert(RHashTable2* ht, bool update, void* key, void* value) {
 	pair_t* kvp;
 	ut64 hash;
 	ut64 bucket;
-	bool found;
+	bool found = true;
 	(void)r_ht_find (ht, key, &found);
-	if (!found) {
+	if (found && update) {
+		r_ht_delete (ht, key);
+	}
+	if (update || !found) {
 		kvp = calloc (1, sizeof (pair_t *));
 		if (kvp) {
 			if (ht->dupkey) {
@@ -100,6 +105,18 @@ R_API bool r_ht_insert(RHashTable2* ht, void* key, void* value) {
 		}
 	}
 	return false;
+}
+
+// Inserts the key value pair key, value into the hashtable.
+// Doesn't allow for "update" of the value.
+R_API bool r_ht_insert (RHashTable2* ht, void* key, void* value) {
+	return internal_ht_insert (ht, false, key, value);
+}
+
+// Inserts the key value pair key, value into the hashtable.
+// Does allow for "update" of the value.
+R_API bool r_ht_update (RHashTable2* ht, void* key, void* value) {
+	return internal_ht_insert (ht, true, key, value);
 }
 
 // Looks up the corresponding value from the key. Returns true if found, false

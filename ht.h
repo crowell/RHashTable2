@@ -48,6 +48,9 @@ R_API void r_ht_destroy(RHashTable2* ht);
 // Insert a new Key-Value pair into the hashtable. If the key already exists, returns false.
 R_API bool r_ht_insert(RHashTable2* ht, void* key, void* value);
 
+// Insert a new Key-Value pair into the hashtable, or updates the value if the key already exists.
+R_API bool r_ht_update(RHashTable2* ht, void* key, void* value);
+
 // Delete a key from the hashtable.
 R_API void r_ht_delete(RHashTable2* ht, void* key);
 
